@@ -16,7 +16,7 @@ MSCI-Diffusion synthesizes target-style character sets from a single reference g
 
 2. **Hierarchical Style-Content Interaction Module (HSCIM)** — coordinates the style and content features at every resolution scale of the denoising U-Net decoder. At each scale, the denoising feature `r_i` and the content feature `e_c^i` pass through channel attention (avg/max descriptors with bidirectional cross-channel correlation), spatial attention, channel fusion (GroupNorm + activation + 1×1 conv), and finally a style-guided cross-attention that takes `e_ms` as key/value — realizing coarse-to-fine style injection.
 
-3. **Conditional Diffusion Generator** — a DDPM-based U-Net (1000 training timesteps) trained with the noise-prediction MSE objective. Sampling uses the DDIM-equivalent first-order DPM-Solver with 50 steps.
+3. **Conditional Diffusion Generator** — a DDPM-based U-Net (1000 training timesteps) trained with the noise-prediction MSE objective. Sampling uses the DDIM sampler with 50 denoising steps.
 
 ## 🔧 Environment
 
@@ -67,7 +67,7 @@ python test.py \
     --resolution=128 --style_image_size=128 --content_image_size=128
 ```
 
-Default sampler: DDIM-equivalent first-order DPM-Solver, 50 denoising steps, classifier-free guidance scale 7.5.
+Default sampler: DDIM, 50 denoising steps (implemented with the first-order DPM-Solver, mathematically equivalent to DDIM).
 
 ## ✅ Self-check Scripts
 
@@ -80,7 +80,7 @@ python verify_paper.py          # 28 empirical checks of every model equation
 
 ```
 ├── train.py                    # training loop (diffusion MSE objective)
-├── test.py                     # batch evaluation on a test set
+├── test.py                     # batch generation on a test set
 ├── sample.py                   # single-image sampling
 ├── configs/msci_diffusion.py   # all training / model arguments
 ├── dataset/                    # dataset & collate
